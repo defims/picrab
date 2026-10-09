@@ -3,7 +3,10 @@ name: ci
 on:
   pull_request:
   push:
-    branches: [main]
+    # master is the default branch — pushes there must gate too, otherwise
+    # direct-to-master commits run untested (the stale Cargo.lock in PR #1
+    # was invisible for exactly this reason).
+    branches: [main, master]
 
 jobs:
   rust:
