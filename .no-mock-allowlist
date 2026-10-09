@@ -35,3 +35,8 @@ tests/full_suite_gate/certification_dossier.md:MockHostActions
 tests/qa_certification_dossier.rs:MockHostActions
 tests/qa_docs_policy_validation.rs:MockHttp
 tests/tui_state.rs:MockRssReader
+
+# tests/memory.rs: StubProvider names a real in-crate test double wired to
+# the memory tool acceptance harness (bd-cv653.4.1); renaming would churn
+# the covered assertions. Tracked as pre-existing debt, not sandbox-related.
+tests/memory.rs:StubProvider

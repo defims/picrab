@@ -247,13 +247,18 @@ fn prepare_supported_unix(
 
     // On macOS the proxy env must be injected per child; on Linux the bwrap
     // command line already embeds it (see sandbox-runtime's linux module).
-    let proxy_env = if cfg!(target_os = "macos") && settings.network_restricted() {
+    // Attribute-gated, NOT cfg!(): the macos module path only exists under
+    // the macos cfg, and cfg!() still type-checks its branch on linux.
+    #[cfg(target_os = "macos")]
+    let proxy_env: Vec<(String, String)> = if settings.network_restricted() {
         let http = runtime.manager.get_proxy_port().unwrap_or(0);
         let socks = runtime.manager.get_socks_proxy_port().unwrap_or(0);
         sandbox_runtime::sandbox::macos::generate_proxy_env(http, socks)
     } else {
         Vec::new()
     };
+    #[cfg(not(target_os = "macos"))]
+    let proxy_env: Vec<(String, String)> = Vec::new();
 
     let sh = wrapped
         .as_shell()
