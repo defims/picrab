@@ -542,8 +542,8 @@ fn release_in_flight(key: u64) {
     }
 }
 
-/// 通用丢弃设备(N-R2):无条件并入 allow_write
-#[cfg(unix)]
+/// 通用丢弃设备(N-R2):无条件并入 allow_write(unix 形态;windows 的
+/// to_srt_config 不并入——NUL 是 shell 语义,无 /dev 设备)
 const DEVICE_ALLOW_WRITE: [&str; 5] = [
     "/dev/null",
     "/dev/stdout",
@@ -558,7 +558,6 @@ const DEVICE_ALLOW_WRITE: [&str; 5] = [
 /// `cwd` because the crate does not absolutize them and Seatbelt subpath
 /// rules need absolute paths.
 #[must_use]
-#[cfg(unix)]
 pub fn to_srt_config(
     settings: &SandboxSettings,
     cwd: &Path,
@@ -637,7 +636,6 @@ pub fn to_srt_config(
 }
 
 /// Resolve one `allowWrite` entry to an absolute path (unix shape).
-#[cfg(unix)]
 fn absolutize_allow_write(entry: &str, cwd: &Path, global_dir: &Path) -> String {
     match entry {
         "." => cwd.display().to_string(),
